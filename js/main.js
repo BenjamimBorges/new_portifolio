@@ -82,6 +82,7 @@
           <div class="project-art art-${escapeHTML(project.visual)}">
             <span class="art-grain" aria-hidden="true"></span>
             <span class="art-mark">${escapeHTML(project.mark)}</span>
+            <span class="art-counter">PROJETO / ${String(index + 1).padStart(2, "0")}</span>
             <span class="art-category">${escapeHTML(project.categoryLabel)}</span>
             <span class="art-year">${escapeHTML(project.year)}</span>
             <span class="art-orbit orbit-one" aria-hidden="true"></span>
@@ -158,25 +159,44 @@
   function projectDetail(project) {
     const tags = project.tags.map(tag => `<span class="tag">${escapeHTML(tag)}</span>`).join("");
     const demo = demos.find(item => item.id === project.demoId);
-    const demoButton = demo ? `<button type="button" class="button button-dark case-demo-button" data-open-demo="${escapeHTML(demo.id)}">Abrir demonstração <span aria-hidden="true">↗</span></button>` : "";
+    const demoButton = demo ? `<button type="button" class="button button-dark case-demo-button" data-open-demo="${escapeHTML(demo.id)}">Experimentar projeto <span aria-hidden="true">↗</span></button>` : "";
     const repoButton = project.link ? `<a class="button case-repo-button" href="${escapeHTML(project.link)}" target="_blank" rel="noopener noreferrer">Ver repositório <span aria-hidden="true">↗</span></a>` : "";
+    const steps = Array.isArray(project.architecture) ? project.architecture : [];
+    const currentIndex = projects.indexOf(project);
+    const previous = projects[(currentIndex + projects.length - 1) % projects.length];
+    const next = projects[(currentIndex + 1) % projects.length];
     return `
       <div class="case-cover art-${escapeHTML(project.visual)}">
         <span class="case-cover-index">${escapeHTML(project.categoryLabel)} / ${escapeHTML(project.year)}</span>
         <span class="case-cover-mark" aria-hidden="true">${escapeHTML(project.mark)}</span>
         <span class="case-cover-status">${escapeHTML(project.status)}</span>
+        <span class="case-cover-caption">ENGENHARIA / ESTUDO DE CASO</span>
       </div>
       <div class="case-content">
         <p class="eyebrow"><span class="eyebrow-line"></span> ${escapeHTML(project.categoryLabel)} / ${escapeHTML(project.year)}</p>
         <h2 id="project-dialog-title">${escapeHTML(project.title)}</h2>
         <p class="case-lead">${escapeHTML(project.description)}</p>
         <div class="case-tag-list tag-list">${tags}</div>
+        <div class="case-facts" aria-label="Ficha técnica">
+          <div><span>ATUAÇÃO</span><strong>${escapeHTML(project.role || "Projeto pessoal")}</strong></div>
+          <div><span>PERÍODO</span><strong>${escapeHTML(project.year)}</strong></div>
+          <div><span>SITUAÇÃO</span><strong>${escapeHTML(project.status)}</strong></div>
+        </div>
         <div class="case-details">
           <section class="case-detail"><span class="case-detail-label">01 / DESAFIO</span><div><h3>O problema</h3><p>${escapeHTML(project.problem || "Projeto em documentação.")}</p></div></section>
           <section class="case-detail"><span class="case-detail-label">02 / SOLUÇÃO</span><div><h3>A abordagem</h3><p>${escapeHTML(project.solution || project.description)}</p></div></section>
           <section class="case-detail"><span class="case-detail-label">03 / ENGENHARIA</span><div><h3>Decisões e desafios</h3><p>${escapeHTML(project.challenge || "Detalhes em elaboração.")}</p></div></section>
         </div>
-        <div class="case-actions">${demoButton}${repoButton}${(!demo && !project.link) ? '<span class="case-private-note">Projeto em desenvolvimento; demonstração ou código público ainda não disponível.</span>' : ''}</div>
+        ${steps.length ? `<section class="case-architecture" aria-label="Fluxo técnico do projeto">
+          <div class="case-architecture-heading"><span class="case-detail-label">04 / ARQUITETURA</span><h3>Como as partes se conectam.</h3><p>Visão resumida do fluxo técnico; os módulos podem estar em diferentes estágios de desenvolvimento.</p></div>
+          <ol class="case-flow">${steps.map((step, i) => `<li><span class="case-flow-number">${String(i + 1).padStart(2, "0")}</span><strong>${escapeHTML(step)}</strong></li>`).join("")}</ol>
+        </section>` : ""}
+        <div class="case-actions">${demoButton}${repoButton}<button type="button" class="button case-share-button" data-copy-project="${escapeHTML(project.id)}">Copiar link <span aria-hidden="true">↗</span></button>${(!demo && !project.link) ? '<span class="case-private-note">Projeto em desenvolvimento; demonstração ou código público ainda não disponível.</span>' : ''}</div>
+        <p class="case-share-feedback" id="case-share-feedback" role="status" aria-live="polite"></p>
+        <nav class="case-pagination" aria-label="Navegar entre projetos">
+          <button type="button" data-project="${escapeHTML(previous.id)}"><span>← PROJETO ANTERIOR</span><strong>${escapeHTML(previous.title)}</strong></button>
+          <button type="button" data-project="${escapeHTML(next.id)}"><span>PRÓXIMO PROJETO →</span><strong>${escapeHTML(next.title)}</strong></button>
+        </nav>
       </div>`;
   }
 
@@ -186,6 +206,8 @@
     if (demoDialog.open) demoDialog.close();
     if (projectDialog.open) projectDialog.close();
     document.querySelector("#project-dialog-content").innerHTML = projectDetail(project);
+    projectDialog.dataset.projectId = project.id;
+    projectDialog.scrollTop = 0;
     projectDialog.showModal();
     syncBodyDialog();
     if (updateUrl) setHash(`#projeto=${encodeURIComponent(project.id)}`);
@@ -205,10 +227,20 @@
   function openDemo(id, updateUrl = true) {
     const demo = demos.find(item => item.id === id);
     if (!demo) return;
+    const originProject = projectDialog.open ? projectDialog.dataset.projectId : "";
     if (projectDialog.open) projectDialog.close();
     if (demoDialog.open) demoDialog.close();
     document.querySelector("#demo-dialog-title").textContent = demo.title;
     document.querySelector("#demo-dialog-description").textContent = demo.description;
+    const related = projects.find(item => item.demoId === demo.id);
+    const relatedButton = document.querySelector("#demo-related-project");
+    relatedButton.hidden = !related;
+    if (related) relatedButton.dataset.project = related.id;
+    else delete relatedButton.dataset.project;
+    const backButton = document.querySelector("#demo-back-project");
+    backButton.hidden = !originProject;
+    if (originProject) backButton.dataset.project = originProject;
+    else delete backButton.dataset.project;
     const about = document.querySelector("#demo-about-content");
     about.replaceChildren();
     const paragraph = document.createElement("p");
@@ -223,12 +255,37 @@
     if (typeof runner === "function") runner(host);
     else host.textContent = "Demonstração indisponível no momento.";
     selectDemoTab("experimentar");
+    demoDialog.scrollTop = 0;
     demoDialog.showModal();
     syncBodyDialog();
     if (updateUrl) setHash(`#demo=${encodeURIComponent(demo.id)}`);
   }
 
+  async function copyProjectLink(id) {
+    const url = `${location.href.split("#")[0]}#projeto=${encodeURIComponent(id)}`;
+    const feedback = document.querySelector("#case-share-feedback");
+    try {
+      if (navigator.clipboard?.writeText) await navigator.clipboard.writeText(url);
+      else {
+        const helper = document.createElement("textarea");
+        helper.value = url;
+        helper.style.position = "fixed";
+        helper.style.opacity = "0";
+        document.body.append(helper);
+        helper.select();
+        const copied = document.execCommand("copy");
+        helper.remove();
+        if (!copied) throw new Error("Clipboard indisponível");
+      }
+      if (feedback) feedback.textContent = "Link copiado. Você já pode compartilhar este projeto.";
+    } catch (_) {
+      if (feedback) feedback.textContent = "Não foi possível copiar automaticamente. Copie o endereço da barra do navegador.";
+    }
+  }
+
   document.addEventListener("click", event => {
+    const shareButton = event.target.closest("[data-copy-project]");
+    if (shareButton) { copyProjectLink(shareButton.dataset.copyProject); return; }
     const projectButton = event.target.closest("[data-project]");
     if (projectButton) { event.preventDefault(); openProject(projectButton.dataset.project); return; }
     const demoButton = event.target.closest("[data-open-demo]");
@@ -257,7 +314,9 @@
   });
 
   function applyRoute() {
-    const hash = decodeURIComponent(location.hash.slice(1));
+    let hash;
+    try { hash = decodeURIComponent(location.hash.slice(1)); }
+    catch (_) { hash = ""; }
     if (hash.startsWith("projeto=")) openProject(hash.slice(8), false);
     else if (hash.startsWith("demo=")) openDemo(hash.slice(5), false);
     else {

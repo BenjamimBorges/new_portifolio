@@ -8,6 +8,8 @@
 window.portfolioProjects = [
   {
     id: "balancete-fiscal",
+    role: "Ferramenta fiscal em evolução",
+    architecture: ["Importação XML", "Parser em Rust", "Conferência fiscal", "Relatórios Excel"],
     demoId: "nfe-explorer",
     title: "Balancete Fiscal",
     problem: "Organizar documentos fiscais XML de diferentes empresas de maneira consistente e rastreável.",
@@ -26,6 +28,8 @@ window.portfolioProjects = [
   },
   {
     id: "anomalias-nfe",
+    role: "Pesquisa e prototipação",
+    architecture: ["NF-e XML", "Regras fiscais", "Features / ML", "Alertas para revisão"],
     title: "Detecção de anomalias em NF-e",
     problem: "Identificar registros fiscais atípicos sem confundir anomalias estatísticas com fraude comprovada.",
     solution: "Combinação experimental de regras fiscais com modelos de aprendizagem automática, com avaliação dos alertas.",
@@ -43,6 +47,8 @@ window.portfolioProjects = [
   },
   {
     id: "sales-performance-bi",
+    role: "Modelagem e visualização",
+    architecture: ["Dados de vendas", "Modelagem", "Medidas DAX", "Painéis de indicadores"],
     title: "Sales Performance BI",
     problem: "Transformar vendas, metas e atendimentos em indicadores úteis para acompanhamento.",
     solution: "Modelagem de dados e indicadores de vendas e metas, com medidas DAX e visualizações.",
@@ -60,6 +66,8 @@ window.portfolioProjects = [
   },
   {
     id: "nina-erp",
+    role: "Desenvolvimento de sistema",
+    architecture: ["Interface web", "API .NET 8", "PostgreSQL", "Módulos de gestão"],
     title: "Nina ERP",
     problem: "Organizar processos e informações de gestão empresarial em um sistema evolutivo.",
     solution: "Módulos de gestão, departamentos e serviços organizados para expansão gradual.",
@@ -77,6 +85,8 @@ window.portfolioProjects = [
   },
   {
     id: "impasto-cosmic",
+    role: "Customização e integração",
+    architecture: ["COSMIC Desktop", "Quickshell", "Componentes QML", "Widgets e painel"],
     title: "Impasto COSMIC",
     problem: "Personalizar a experiência do desktop COSMIC com informações úteis e comportamento consistente.",
     solution: "Componentes QML com Quickshell e ajustes de interface no ambiente Linux.",
@@ -94,6 +104,8 @@ window.portfolioProjects = [
   },
   {
     id: "network-anomaly-detector",
+    role: "Experimento de aprendizado de máquina",
+    architecture: ["Tráfego de rede", "Extração de métricas", "Isolation Forest", "Alertas experimentais"],
     title: "Network Anomaly Detector",
     problem: "Explorar como identificar desvios em métricas de tráfego de rede com aprendizado não supervisionado.",
     solution: "Extração de características de tráfego e aplicação de Isolation Forest para pontuação de anomalias.",
@@ -111,6 +123,8 @@ window.portfolioProjects = [
   },
   {
     id: "webhook-simulator",
+    role: "Playground de integração",
+    architecture: ["Evento JSON", "Validação local", "Política de retry", "Log de tentativas"],
     demoId: "webhook-simulator",
     title: "Webhook Simulator",
     problem: "Entender como sistemas integrados lidam com eventos, erros HTTP e tentativas de entrega.",
@@ -129,6 +143,8 @@ window.portfolioProjects = [
   },
   {
     id: "data-check",
+    role: "Playground de análise de dados",
+    architecture: ["Arquivo CSV", "Parser no navegador", "Métricas de qualidade", "Relatório JSON"],
     demoId: "data-check",
     title: "DataCheck Playground",
     problem: "Encontrar rapidamente problemas básicos de qualidade em conjuntos de dados tabulares.",
