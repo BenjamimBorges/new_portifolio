@@ -1,63 +1,78 @@
 # Portfólio — Benjamim Borges
 
-Versão estática do portfólio, reconstruída com **HTML, CSS e JavaScript puro**.
+Portfólio estático, feito em **HTML, CSS e JavaScript puro**, com identidade editorial e componentes visuais adaptados de padrões do [21st.dev](https://21st.dev/). Não utiliza React, TypeScript, Tailwind, npm ou build.
 
-## Tecnologias
+## O que foi implementado
 
-- HTML5 semântico
-- CSS3 responsivo (sem framework)
-- JavaScript moderno (ES6+, sem framework)
-- Nenhuma dependência de npm, Node.js, React, TypeScript ou etapa de build
+- Página inicial e identidade visual original preservadas, com refinamentos de botões e cards.
+- Cards de projetos com destaque editorial/bento, filtros, pesquisa e hover.
+- Modais acessíveis com `<dialog>` nativo: contexto, solução, decisões técnicas, tecnologias e links.
+- URLs compartilháveis: `#projeto=balancete-fiscal` e `#demo=nfe-explorer`.
+- Laboratório com cards e **três demonstrações executáveis no navegador**:
+  - **NF-e Explorer:** lê XML local, mostra emitente, destinatário, produtos e total.
+  - **Webhook Simulator:** recebe JSON e simula códigos HTTP e tentativas.
+  - **DataCheck Playground:** lê CSV, conta linhas/colunas, lacunas e duplicatas.
+- Cada demonstração pode ser aberta pelo Laboratório ou pelo modal de seu projeto correspondente.
+- Links antigos para experimentos do GitHub preservados.
+- Marquee horizontal que se move da esquerda para a direita ao passar o mouse ou focar.
+- Tema claro/escuro, responsividade, navegação por teclado e respeito a `prefers-reduced-motion`.
 
-## Executar localmente no Pop!_OS / Linux
+**Importante:** as demonstrações são implementações **locais em JavaScript**. Elas **não executam** Rust ou Python, não fazem chamadas a serviços externos, não consultam a SEFAZ e não validam assinaturas de NF-e. São protótipos educativos, não serviços fiscais oficiais.
 
-1. Extraia o ZIP.
-2. Abra um terminal dentro da pasta `portfolio-javascript-puro`.
-3. Execute:
+## Executar no Pop!_OS / Linux
+
+1. Extraia o ZIP e abra um terminal dentro da pasta `new_portifolio`.
+2. Execute:
 
 ```bash
 python3 -m http.server 8000
 ```
 
-4. Abra `http://localhost:8000` no navegador.
-5. Para encerrar o servidor, pressione `Ctrl + C` no terminal.
+3. Abra `http://localhost:8000`.
+4. Encerre com `Ctrl + C`.
 
-> O servidor local é recomendado porque o JavaScript usa módulos/arquivos separados. Não é necessário instalar pacotes.
+O site pode funcionar diretamente ao abrir `index.html`, mas usar um servidor local facilita testes e publicação.
 
-## Onde editar
+## Estrutura
 
-| O que você quer alterar | Arquivo |
+```text
+new_portifolio/
+├── index.html
+├── css/
+│   ├── style.css          # CSS original
+│   └── components.css     # Novos componentes, responsividade e modais
+├── js/
+│   ├── projects.js        # Projetos, experimentos e catálogo de demos
+│   ├── demos.js           # Implementações locais dos 3 playgrounds
+│   └── main.js            # Renderização, filtros, modais, tema e navegação
+└── assets/                # Imagens e favicon originais
+```
+
+## Personalizar
+
+| Alteração | Arquivo |
 |---|---|
-| Textos, títulos, seções e navegação | `index.html` |
-| Cores, fontes, espaçamentos e responsividade | `css/style.css` |
-| Projetos em destaque e filtros | `js/projects.js` |
-| Menu, tema, busca, filtros e animações | `js/main.js` |
-| Foto de perfil | `assets/profile.jpg` |
-| Ícone da aba | `assets/favicon.svg` |
+| Textos e seções | `index.html` |
+| Cores e CSS existente | `css/style.css` |
+| Cards, modais, botões, Laboratório e marquee | `css/components.css` |
+| Adicionar/editar projetos | `js/projects.js` (`window.portfolioProjects`) |
+| Cadastrar demonstrações | `js/projects.js` (`window.portfolioDemos`) |
+| Implementar lógica das demonstrações | `js/demos.js` |
+| Filtros, tema, modais e navegação | `js/main.js` |
 
 ### Adicionar um projeto
 
-Abra `js/projects.js` e acrescente um objeto dentro de `window.portfolioProjects`.
+Crie um objeto em `window.portfolioProjects` com os campos `id` (único), `title`, `category`, `categoryLabel`, `year`, `status`, `description`, `tags`, `visual`, `mark`, `problem`, `solution`, `challenge` e `link` (opcional). Para associar uma demonstração, use `demoId` com o mesmo `id` de `window.portfolioDemos`.
 
-Campos usados: `title`, `category`, `categoryLabel`, `year`, `status`, `description`, `tags`, `visual`, `mark`, `link` e `linkLabel`.
+Categorias disponíveis: `sistemas`, `dados`, `pesquisa`, `linux`.
 
-Categorias disponíveis: `sistemas`, `dados`, `pesquisa` e `linux`. Se o projeto ainda não tiver um repositório público, deixe `link: ""` e use `linkLabel` para indicar o estado.
+### Publicar
 
-## Publicar
+O projeto pode ser publicado no GitHub Pages ou em outro serviço de hospedagem estática. A pasta raiz contém o `index.html`. **Build: nenhum.** Não inclua chaves privadas, credenciais ou dados empresariais reais no repositório.
 
-O site é estático e pode ser publicado diretamente em serviços como GitHub Pages ou Cloudflare Pages.
+## Créditos de referência
 
-- **Diretório de publicação:** raiz do projeto (`/`)
-- **Comando de build:** nenhum
-- **Dependências:** nenhuma
+- **Direção editorial:** [kenjilambert.com](https://kenjilambert.com/), referência visual.
+- **Padrões de componentes:** [21st.dev](https://21st.dev/), referência para cards, bento, diálogos, tabs e marquee.
 
-## Sobre a migração
-
-Esta versão substitui a estrutura anterior baseada em React, TypeScript, TanStack e Vite por arquivos que podem ser lidos e editados diretamente. Ela não precisa ser aberta no editor do Lovable para funcionar; o fluxo recomendado é editar os arquivos com VS Code e publicar como site estático.
-
-## Observações
-
-- Os links de GitHub foram mantidos somente nos projetos que já tinham repositórios indicados no portfólio anterior.
-- Projetos em andamento aparecem sem link público.
-- Não há formulário de contato falso: os botões levam aos perfis públicos de LinkedIn e GitHub.
-- O tema claro/escuro fica salvo no navegador quando o armazenamento local está disponível.
+Os novos componentes foram **reescritos em CSS e JavaScript puro**, sem copiar os pacotes React/TypeScript/Tailwind do 21st.dev. Os arquivos de imagem e a identidade de base foram preservados do ZIP enviado pelo usuário.
